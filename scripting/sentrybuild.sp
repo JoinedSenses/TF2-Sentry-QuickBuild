@@ -18,10 +18,6 @@ public void OnPluginStart(){
 	g_hDispenserLevel = CreateConVar("sm_dispenserlevel", "3", "Sets the default sentry level (1-3)", FCVAR_NOTIFY);
 	g_hTeleportLevel = CreateConVar("sm_teleportlevel", "3", "Sets the default sentry level (1-3)", FCVAR_NOTIFY);
 	
-	HookConVarChange(g_hSentryLevel, cvarSentryLevelChanged);
-	HookConVarChange(g_hDispenserLevel, cvarDispenserLevelChanged);
-	HookConVarChange(g_hTeleportLevel, cvarTeleportLevelChanged);
-	
 	HookEvent("player_builtobject", eventObjectBuilt);
 }
 public TF2Items_OnGiveNamedItem_Post(client, String:classname[], index, level, quality, entity)
@@ -36,24 +32,7 @@ public TF2Items_OnGiveNamedItem_Post(client, String:classname[], index, level, q
 		TF2Attrib_SetByDefIndex(entity, 2043, 100.0);
 	}
 } 
-public cvarSentryLevelChanged(ConVar convar, const char[] oldValue, const char[] newValue){
-	if (StringToInt(newValue) <= 0)
-		SetConVarInt(g_hSentryLevel, 0);
-	else
-		SetConVarInt(g_hSentryLevel, StringToInt(newValue));
-}
-public cvarDispenserLevelChanged(ConVar convar, const char[] oldValue, const char[] newValue){
-	if (StringToInt(newValue) <= 0)
-		SetConVarInt(g_hDispenserLevel, 0);
-	else
-		SetConVarInt(g_hDispenserLevel, StringToInt(newValue));
-}
-public cvarTeleportLevelChanged(ConVar convar, const char[] oldValue, const char[] newValue){
-	if (StringToInt(newValue) <= 0)
-		SetConVarInt(g_hTeleportLevel, 0);
-	else
-		SetConVarInt(g_hTeleportLevel, StringToInt(newValue));
-}
+
 public Action eventObjectBuilt(Event event, const char[] name, bool dontBroadcast){
 	int obj = GetEventInt(event, "object"), index = GetEventInt(event, "index");
 	if (obj == 0){
