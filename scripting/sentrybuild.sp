@@ -2,7 +2,7 @@
 #include <tf2attributes>
 #include <tf2_stocks>
 
-Handle g_hSentryLevel;
+ConVar g_hSentryLevel;
 
 public Plugin myinfo = {
 	name = "Sentry Quick Build", 
@@ -12,7 +12,7 @@ public Plugin myinfo = {
 	url = "https://github.com/JoinedSenses"
 };
 public void OnPluginStart(){
-    g_hSentryLevel = CreateConVar("ja_sglevel", "1", "Sets the default sentry level (1-3)", FCVAR_NOTIFY);
+    g_hSentryLevel = CreateConVar("sm_sentrylevel", "1", "Sets the default sentry level (1-3)", FCVAR_NOTIFY);
     HookConVarChange(g_hSentryLevel, cvarSentryLevelChanged);
     HookEvent("player_builtobject", eventObjectBuilt);
 }
@@ -32,11 +32,11 @@ public TF2Items_OnGiveNamedItem_Post(client, String:classname[], index, level, q
         }
     }
 } 
-public cvarSentryLevelChanged(Handle convar, const char[] oldValue, const char[] newValue){
+public cvarSentryLevelChanged(ConVar convar, const char[] oldValue, const char[] newValue){
     if (StringToInt(newValue) == 0)
         SetConVarBool(g_hSentryLevel, false);
     else
-        SetConVarBool(g_hSentryLevel, true);
+        SetConVarInt(g_hSentryLevel, StringToInt(newValue));
 }
 public Action eventObjectBuilt(Event event, const char[] name, bool dontBroadcast){
     int obj = GetEventInt(event, "object"), index = GetEventInt(event, "index");
