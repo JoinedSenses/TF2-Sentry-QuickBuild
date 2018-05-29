@@ -4,6 +4,13 @@
 
 Handle g_hSentryLevel;
 
+public Plugin myinfo = {
+	name = "Sentry Quick Build", 
+	author = "JoinedSenses", 
+	description = "Enable quick build of sentries", 
+	version = "1.0.0", 
+	url = "https://github.com/JoinedSenses"
+};
 public void OnPluginStart(){
     g_hSentryLevel = CreateConVar("ja_sglevel", "1", "Sets the default sentry level (1-3)", FCVAR_NOTIFY);
     HookConVarChange(g_hSentryLevel, cvarSentryLevelChanged);
