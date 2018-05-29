@@ -38,7 +38,6 @@ public cvarSentryLevelChanged(Handle convar, const char[] oldValue, const char[]
     else
         SetConVarBool(g_hSentryLevel, true);
 }
-
 public Action eventObjectBuilt(Event event, const char[] name, bool dontBroadcast){
     int obj = GetEventInt(event, "object"), index = GetEventInt(event, "index");
     if (obj == 2) {
