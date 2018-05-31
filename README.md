@@ -10,7 +10,7 @@ sm_cvar qb_dispenserlevel "3" // Sets the default dispenser level (1-3)
 sm_cvar qb_teleportlevel "3" // Sets the default teleporter level (1-3)  
 
 ## Commands:  
-sm_quickbuild  [enable|enabled|1]  [disable|disabled|0] or blank // Toggles plugin on/off
+sm_quickbuild  [enable|enabled|1]  [disable|disabled|0] or blank // Toggles plugin on/off  
 sm_sentrylevel (1-3) // Toggles sentry level
 sm_dispenserlevel (1-3) // Toggles dispenser level
 sm_teleportlevel (1-3) // Toggles teleport level
