@@ -1,7 +1,7 @@
 # TF2-Sentry-QuickBuild  
-Enables quick build of sentries
-Sentries spawn instantly and require only one hit to upgrade  
-Dispensers and teleports default to level 3
+Enables quick build of sentries.  
+Sentries spawn instantly and require only one hit to upgrade.  
+Dispensers and teleports default to level 3.
 
 ## Cvar:  
 sm_cvar sm_quickbuild_enable "1" // Enables/Disables the plugin (0, 1)  
