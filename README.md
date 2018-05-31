@@ -16,5 +16,5 @@ sm_dispenserlevel (1-3) // Toggles dispenser level
 sm_teleportlevel (1-3) // Toggles teleport level
 
 ## Requires:
-[TF2Items] (https://forums.alliedmods.net/showthread.php?p=1050170)
+[TF2Items](https://forums.alliedmods.net/showthread.php?p=1050170)
 tf2_stocks
