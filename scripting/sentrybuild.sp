@@ -40,7 +40,7 @@ public void OnPluginStart(){
 	newWrench = TF2Items_CreateItem(PRESERVE_ATTRIBUTES|OVERRIDE_ATTRIBUTES);
 	TF2Items_SetAttribute(newWrench, 0, 464, 100.0);
 	TF2Items_SetAttribute(newWrench, 1, 465, 100.0);
-	TF2Items_SetAttribute(newWrench, 2, 2043, 1.00);
+	TF2Items_SetAttribute(newWrench, 2, 2043, 10.0);
 	TF2Items_SetNumAttributes(newWrench, 3);
 }
 // public Action cmdTestt(int client, int args){
