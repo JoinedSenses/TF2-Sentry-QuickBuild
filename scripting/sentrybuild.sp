@@ -1,12 +1,12 @@
 #include <sourcemod>
 #include <tf2items>
 #include <tf2_stocks>
+#pragma newdecls required
 
 ConVar g_hEnabled;
 ConVar g_hSentryLevel;
 ConVar g_hDispenserLevel;
 ConVar g_hTeleportLevel;
-
 Handle newWrench;
 
 public Plugin myinfo = {
@@ -40,8 +40,8 @@ public void OnPluginStart(){
 	newWrench = TF2Items_CreateItem(PRESERVE_ATTRIBUTES|OVERRIDE_ATTRIBUTES);
 	TF2Items_SetAttribute(newWrench, 0, 464, 100.0);
 	TF2Items_SetAttribute(newWrench, 1, 465, 100.0);
-	TF2Items_SetAttribute(newWrench, 3, 2043, 0.1);
-	TF2Items_SetNumAttributes(newWrench, 4);
+	TF2Items_SetAttribute(newWrench, 2, 2043, 0.1);
+	TF2Items_SetNumAttributes(newWrench, 3);
 }
 // public Action cmdTestt(int client, int args){
 	// PrintToChat(client, "%i %i %i %i", g_hEnabled.IntValue, g_hSentryLevel.IntValue, g_hDispenserLevel.IntValue, g_hTeleportLevel.IntValue);
@@ -83,7 +83,7 @@ public Action cmdQuickBuild(int client, int args){
 	else if (StrEqual(sArg, "disable") || StrEqual(sArg, "disabled") ||StrEqual(sArg, "0"))
 		SetConVarInt(g_hEnabled, 0);
 	else{
-		ReplyToCommand(client, "Incorrect parameters. Try enable,disable, 0, or 1");
+		ReplyToCommand(client, "Incorrect parameters. Try enable, disable, 0, or 1");
 		return Plugin_Handled;
 	}
 	return Plugin_Handled;
@@ -140,7 +140,8 @@ public Action TF2Items_OnGiveNamedItem(int client, char[] classname, int definde
 	return Plugin_Continue;
 } 
 public Action eventObjectBuilt(Event event, const char[] name, bool dontBroadcast){
-	if (GetConVarInt(g_hEnabled) == 0 ) return Plugin_Continue;
+	if (GetConVarInt(g_hEnabled) == 0 ) 
+		return Plugin_Continue;
 	char sValue[8];
 	int obj = GetEventInt(event, "object"), index = GetEventInt(event, "index");
 	if (obj == 0){
