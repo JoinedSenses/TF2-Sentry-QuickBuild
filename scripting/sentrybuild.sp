@@ -13,7 +13,7 @@ public Plugin myinfo = {
 	name = "Sentry Quick Build", 
 	author = "JoinedSenses", 
 	description = "Enable quick build of sentries", 
-	version = "1.1.0", 
+	version = "1.2.0", 
 	url = "https://github.com/JoinedSenses"
 };
 public void OnPluginStart(){
@@ -42,6 +42,9 @@ public void OnPluginStart(){
 	TF2Items_SetAttribute(newWrench, 1, 465, 100.0);
 	TF2Items_SetAttribute(newWrench, 2, 2043, 10.0);
 	TF2Items_SetNumAttributes(newWrench, 3);
+	
+	if (GetConVarInt(g_hEnabled) == 1 )
+		SetConVarInt(FindConVar("tf_fastbuild"), 1);
 }
 // public Action cmdTestt(int client, int args){
 	// PrintToChat(client, "%i %i %i %i", g_hEnabled.IntValue, g_hSentryLevel.IntValue, g_hDispenserLevel.IntValue, g_hTeleportLevel.IntValue);
@@ -55,10 +58,14 @@ public void cvarEnableChanged(ConVar convar, const char[] oldValue, const char[]
 			TF2_RegeneratePlayer(i)
 		}
 	}
-	if (StringToInt(newValue)  == 1)
+	if (StringToInt(newValue)  == 1){
+		SetConVarInt(FindConVar("tf_fastbuild"), 1);
 		return;
-	else
+	}
+	else{
+		SetConVarInt(FindConVar("tf_fastbuild"), 0);
 		SetConVarInt(convar, 0);
+	}
 }
 public void cvarChanged(ConVar convar, const char[] oldValue, const char[] newValue){
 	int iValue = StringToInt(newValue);
@@ -149,6 +156,7 @@ public Action eventObjectBuilt(Event event, const char[] name, bool dontBroadcas
 	}
 	else if (obj == 1){
 		IntToString(g_hTeleportLevel.IntValue -1, sValue, sizeof(sValue));
+		SetEntProp(index, Prop_Send, "m_CollisionGroup", 1);
 	}	
 	else if (obj == 2){
 		int mini = GetEntProp(index, Prop_Send, "m_bMiniBuilding");
