@@ -13,8 +13,4 @@ sm_cvar qb_teleportlevel "3" // Sets the default teleporter level (1-3)
 sm_quickbuild  [enable|enabled|1]  [disable|disabled|0] or blank // Toggles plugin on/off  
 sm_sentrylevel (1-3) // Toggles sentry level  
 sm_dispenserlevel (1-3) // Toggles dispenser level  
-sm_teleportlevel (1-3) // Toggles teleport level  
-
-## Requires:
-[TF2Items](https://forums.alliedmods.net/showthread.php?p=1050170)  
-tf2_stocks
+sm_teleportlevel (1-3) // Toggles teleport level
