@@ -1,14 +1,21 @@
 #pragma newdecls required
 #pragma semicolon 1
-#define PLUGIN_VERSION "2.2.0"
+#define PLUGIN_VERSION "2.3.0"
 #include <sourcemod>
 #include <sdktools>
 
+enum {
+	OBJ_DISPENSER,
+	OBJ_TELEPORTER,
+	OBJ_SENTRY
+}
+
 ConVar
-	  g_hEnabled
-	, g_hSentryLevel
-	, g_hDispenserLevel
-	, g_hTeleportLevel;
+	  cvarEnabled
+	, cvarSentryLevel
+	, cvarDispenserLevel
+	, cvarTeleportLevel
+	, cvarDisableTeleCollision;
 Handle
 	  g_hSDKStartBuilding
 	, g_hSDKFinishBuilding
@@ -23,22 +30,25 @@ public Plugin myinfo = {
 	url = "https://github.com/JoinedSenses"
 };
 
+// --------------- SM API
+
 public void OnPluginStart() {
 	CreateConVar("sm_quickbuild_version", PLUGIN_VERSION, "Sentry Quickbuild Version",  FCVAR_NOTIFY|FCVAR_DONTRECORD);
-	g_hEnabled = CreateConVar("sm_quickbuild_enable", "1", "Enables/disables engineer quick build", FCVAR_NOTIFY);
-	g_hSentryLevel = CreateConVar("qb_sentrylevel", "1", "Sets the default sentry level (1-3)", FCVAR_NOTIFY);
-	g_hDispenserLevel = CreateConVar("qb_dispenserlevel", "3", "Sets the default sentry level (1-3)", FCVAR_NOTIFY);
-	g_hTeleportLevel = CreateConVar("qb_teleportlevel", "3", "Sets the default sentry level (1-3)", FCVAR_NOTIFY);
+	cvarEnabled = CreateConVar("sm_quickbuild_enable", "1", "Enables/disables engineer quick build", FCVAR_NOTIFY);
+	cvarSentryLevel = CreateConVar("qb_sentrylevel", "1", "Sets the default sentry level (1-3)", FCVAR_NOTIFY);
+	cvarDispenserLevel = CreateConVar("qb_dispenserlevel", "3", "Sets the default sentry level (1-3)", FCVAR_NOTIFY);
+	cvarTeleportLevel = CreateConVar("qb_teleportlevel", "3", "Sets the default sentry level (1-3)", FCVAR_NOTIFY);
+	cvarDisableTeleCollision = CreateConVar("qb_disabletelecollision", "1", "Prevents other players from colliding with teles", FCVAR_NOTIFY);
 	
 	RegAdminCmd("sm_quickbuild", cmdQuickBuild, ADMFLAG_ROOT);
 	RegAdminCmd("sm_sentrylevel", cmdSentryLevel, ADMFLAG_ROOT);
 	RegAdminCmd("sm_dispenserlevel", cmdDispenserLevel, ADMFLAG_ROOT);
 	RegAdminCmd("sm_teleportlevel", cmdTeleportLevel, ADMFLAG_ROOT);
 	
-	g_hEnabled.AddChangeHook(cvarEnableChanged);
-	g_hSentryLevel.AddChangeHook(cvarChanged);
-	g_hDispenserLevel.AddChangeHook(cvarChanged);
-	g_hTeleportLevel.AddChangeHook(cvarChanged);
+	cvarEnabled.AddChangeHook(cvarEnableChanged);
+	cvarSentryLevel.AddChangeHook(cvarChanged);
+	cvarDispenserLevel.AddChangeHook(cvarChanged);
+	cvarTeleportLevel.AddChangeHook(cvarChanged);
 	
 	HookEvent("player_builtobject", eventObjectBuilt);
 	HookEvent("player_upgradedobject", eventUpgradedObject);
@@ -68,11 +78,13 @@ public void OnPluginStart() {
 			
 			delete hGameConf;
 		}
-		if (g_hSDKStartBuilding == null ||g_hSDKFinishBuilding == null || g_hSDKStartUpgrading == null || g_hSDKFinishUpgrading == null) {
-			LogError("Failed to load buildings gamedata.  Instant building and upgrades will not be available.");
+		if (g_hSDKStartBuilding == null || g_hSDKFinishBuilding == null || g_hSDKStartUpgrading == null || g_hSDKFinishUpgrading == null) {
+			LogError("Failed to load gamedata/buildings.txt. Instant building and upgrades will not be available.");
 		}
 	}
 }
+
+// --------------- CVAR Hook
 
 public void cvarEnableChanged(ConVar convar, const char[] oldValue, const char[] newValue) {
 	if (StringToInt(newValue) == 1) {
@@ -88,9 +100,11 @@ public void cvarChanged(ConVar convar, const char[] oldValue, const char[] newVa
 	convar.SetInt(1);
 }
 
+// --------------- Commands
+
 public Action cmdQuickBuild(int client, int args) {
 	if (args == 0) {
-		g_hEnabled.SetInt(g_hEnabled.BoolValue ? 0 : 1);
+		cvarEnabled.SetInt(cvarEnabled.BoolValue ? 0 : 1);
 		return Plugin_Handled;
 	}
 
@@ -98,10 +112,10 @@ public Action cmdQuickBuild(int client, int args) {
 	GetCmdArgString(sArg, sizeof(sArg));
 
 	if (StrEqual(sArg, "enable") || StrEqual(sArg, "enabled") || StrEqual(sArg, "1")) {
-		g_hEnabled.SetInt(1);
+		cvarEnabled.SetInt(1);
 	}
-	else if (StrEqual(sArg, "disable") || StrEqual(sArg, "disabled") ||StrEqual(sArg, "0")) {
-		g_hEnabled.SetInt(0);
+	else if (StrEqual(sArg, "disable") || StrEqual(sArg, "disabled") || StrEqual(sArg, "0")) {
+		cvarEnabled.SetInt(0);
 	}
 	else {
 		ReplyToCommand(client, "Incorrect parameters. Try enable, disable, 0, or 1");
@@ -121,7 +135,7 @@ public Action cmdSentryLevel(int client, int args) {
 	int iArg = StringToInt(sArg);
 
 	if ( 0 < iArg <= 3) {
-		g_hSentryLevel.SetInt(iArg);
+		cvarSentryLevel.SetInt(iArg);
 	}
 	else {
 		ReplyToCommand(client, "Incorrect parameters. Requires 1, 2, or 3");
@@ -141,7 +155,7 @@ public Action cmdDispenserLevel(int client, int args) {
 	int iArg = StringToInt(sArg);
 
 	if ( 0 < iArg <= 3) {
-		g_hDispenserLevel.SetInt(iArg);
+		cvarDispenserLevel.SetInt(iArg);
 	}
 	else {
 		ReplyToCommand(client, "Incorrect parameters. Requires 1, 2, or 3");
@@ -161,7 +175,7 @@ public Action cmdTeleportLevel(int client, int args) {
 	int iArg = StringToInt(sArg);
 
 	if ( 0 < iArg <= 3) {
-		g_hTeleportLevel.SetInt(iArg);
+		cvarTeleportLevel.SetInt(iArg);
 	}
 	else {
 		ReplyToCommand(client, "Incorrect parameters. Requires 1, 2, or 3");
@@ -169,15 +183,17 @@ public Action cmdTeleportLevel(int client, int args) {
 	return Plugin_Handled;
 }
 
+// --------------- Events
+
 public Action eventObjectBuilt(Event event, const char[] name, bool dontBroadcast) {
-	if (GetConVarInt(g_hEnabled) == 0 ) {
+	if (GetConVarInt(cvarEnabled) == 0 ) {
 		return Plugin_Continue;
 	}
 		
 	int obj = event.GetInt("object");
 	int index = event.GetInt("index");
 	
-	if (g_hSDKStartBuilding == null ||g_hSDKFinishBuilding == null || g_hSDKStartUpgrading == null || g_hSDKFinishUpgrading == null) {
+	if (g_hSDKStartBuilding == null || g_hSDKFinishBuilding == null || g_hSDKStartUpgrading == null || g_hSDKFinishUpgrading == null) {
 		return Plugin_Continue;
 	}
 		
@@ -185,48 +201,52 @@ public Action eventObjectBuilt(Event event, const char[] name, bool dontBroadcas
 	RequestFrame(FrameCallback_FinishBuilding, index);
 	
 	int maxupgradelevel = GetEntProp(index, Prop_Send, "m_iHighestUpgradeLevel");
-	
-	if (obj == 0) {
-		if (maxupgradelevel >  g_hDispenserLevel.IntValue) {
-			SetEntProp(index, Prop_Send, "m_iUpgradeLevel", maxupgradelevel);
-			RequestFrame(FrameCallback_FinishUpgrading, index);
+	switch (obj) {
+		case OBJ_DISPENSER: {
+			if (maxupgradelevel >  cvarDispenserLevel.IntValue) {
+				SetEntProp(index, Prop_Send, "m_iUpgradeLevel", maxupgradelevel);
+				RequestFrame(FrameCallback_FinishUpgrading, index);
+			}
+			else if(cvarDispenserLevel.IntValue != 1) {
+				SetEntProp(index, Prop_Send, "m_iUpgradeLevel", cvarDispenserLevel.IntValue-1);
+				SetEntProp(index, Prop_Send, "m_iHighestUpgradeLevel", cvarDispenserLevel.IntValue-1);
+				RequestFrame(FrameCallback_StartUpgrading, index);
+				RequestFrame(FrameCallback_FinishUpgrading, index);
+			}
 		}
-		else if(g_hDispenserLevel.IntValue != 1) {
-			SetEntProp(index, Prop_Send, "m_iUpgradeLevel", g_hDispenserLevel.IntValue-1);
-			SetEntProp(index, Prop_Send, "m_iHighestUpgradeLevel", g_hDispenserLevel.IntValue-1);
-			RequestFrame(FrameCallback_StartUpgrading, index);
-			RequestFrame(FrameCallback_FinishUpgrading, index);
+		case OBJ_TELEPORTER: {
+			if (maxupgradelevel >  cvarTeleportLevel.IntValue) {
+				SetEntProp(index, Prop_Send, "m_iUpgradeLevel", maxupgradelevel);
+				RequestFrame(FrameCallback_FinishUpgrading, index);
+			}
+			else if(cvarTeleportLevel.IntValue != 1) {
+				SetEntProp(index, Prop_Send, "m_iUpgradeLevel", cvarTeleportLevel.IntValue-1);
+				SetEntProp(index, Prop_Send, "m_iHighestUpgradeLevel", cvarTeleportLevel.IntValue-1);
+				RequestFrame(FrameCallback_StartUpgrading, index);
+				RequestFrame(FrameCallback_FinishUpgrading, index);
+			}
+			if (cvarDisableTeleCollision.BoolValue) {
+				SetEntProp(index, Prop_Send, "m_CollisionGroup", 2);	
+			}
+		}
+		case OBJ_SENTRY: {
+			int mini = GetEntProp(index, Prop_Send, "m_bMiniBuilding");
+			if (mini == 1) {
+				return Plugin_Continue;
+			}
+			if (maxupgradelevel >  cvarSentryLevel.IntValue) {
+				SetEntProp(index, Prop_Send, "m_iUpgradeLevel", maxupgradelevel);
+				RequestFrame(FrameCallback_FinishUpgrading, index);
+			}
+			else if(cvarSentryLevel.IntValue != 1) {
+				SetEntProp(index, Prop_Send, "m_iUpgradeLevel", cvarSentryLevel.IntValue-1);
+				SetEntProp(index, Prop_Send, "m_iHighestUpgradeLevel", cvarSentryLevel.IntValue-1);
+				RequestFrame(FrameCallback_StartUpgrading, index);
+				RequestFrame(FrameCallback_FinishUpgrading, index);
+			}
 		}
 	}
-	else if (obj == 1) {
-		if (maxupgradelevel >  g_hTeleportLevel.IntValue) {
-			SetEntProp(index, Prop_Send, "m_iUpgradeLevel", maxupgradelevel);
-			RequestFrame(FrameCallback_FinishUpgrading, index);
-		}
-		else if(g_hTeleportLevel.IntValue != 1) {
-			SetEntProp(index, Prop_Send, "m_iUpgradeLevel", g_hTeleportLevel.IntValue-1);
-			SetEntProp(index, Prop_Send, "m_iHighestUpgradeLevel", g_hTeleportLevel.IntValue-1);
-			RequestFrame(FrameCallback_StartUpgrading, index);
-			RequestFrame(FrameCallback_FinishUpgrading, index);
-		}
-		SetEntProp(index, Prop_Send, "m_CollisionGroup", 2);
-	}	
-	else if (obj == 2) {
-		int mini = GetEntProp(index, Prop_Send, "m_bMiniBuilding");
-		if (mini == 1) {
-			return Plugin_Continue;
-		}
-		if (maxupgradelevel >  g_hSentryLevel.IntValue) {
-			SetEntProp(index, Prop_Send, "m_iUpgradeLevel", maxupgradelevel);
-			RequestFrame(FrameCallback_FinishUpgrading, index);
-		}
-		else if(g_hSentryLevel.IntValue != 1) {
-			SetEntProp(index, Prop_Send, "m_iUpgradeLevel", g_hSentryLevel.IntValue-1);
-			SetEntProp(index, Prop_Send, "m_iHighestUpgradeLevel", g_hSentryLevel.IntValue-1);
-			RequestFrame(FrameCallback_StartUpgrading, index);
-			RequestFrame(FrameCallback_FinishUpgrading, index);
-		}
-	}
+
 	SetEntProp(index, Prop_Send, "m_iUpgradeMetalRequired", 0);
 	SetVariantInt(GetEntProp(index, Prop_Data, "m_iMaxHealth"));
 	AcceptEntityInput(index, "SetHealth");
@@ -240,6 +260,8 @@ public Action eventUpgradedObject(Event event, const char[] sName, bool bDontBro
 	}
 	return Plugin_Continue;
 }
+
+// --------------- VFunction Callbacks
 
 public void FrameCallback_StartBuilding(any entity) {
 	SDKCall(g_hSDKStartBuilding, entity);
