@@ -1,6 +1,6 @@
 #pragma newdecls required
 #pragma semicolon 1
-#define PLUGIN_VERSION "2.3.0"
+#define PLUGIN_VERSION "2.3.1"
 #include <sourcemod>
 #include <sdktools>
 
@@ -104,7 +104,7 @@ public void cvarChanged(ConVar convar, const char[] oldValue, const char[] newVa
 
 public Action cmdQuickBuild(int client, int args) {
 	if (args == 0) {
-		cvarEnabled.SetInt(cvarEnabled.BoolValue ? 0 : 1);
+		cvarEnabled.SetInt(!cvarEnabled.BoolValue);
 		return Plugin_Handled;
 	}
 
@@ -186,7 +186,7 @@ public Action cmdTeleportLevel(int client, int args) {
 // --------------- Events
 
 public Action eventObjectBuilt(Event event, const char[] name, bool dontBroadcast) {
-	if (GetConVarInt(cvarEnabled) == 0 ) {
+	if (!cvarEnabled.BoolValue) {
 		return Plugin_Continue;
 	}
 		
@@ -254,6 +254,9 @@ public Action eventObjectBuilt(Event event, const char[] name, bool dontBroadcas
 }
 
 public Action eventUpgradedObject(Event event, const char[] sName, bool bDontBroadcast) {
+	if (!cvarEnabled.BoolValue) {
+		return Plugin_Continue;
+	}
 	if (g_hSDKFinishUpgrading != null) {
 		int entity = event.GetInt("index");
 		RequestFrame(FrameCallback_FinishUpgrading, entity);
