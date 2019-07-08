@@ -3,6 +3,8 @@ Enables quick build of sentries.
 Sentries spawn instantly and require only one hit to upgrade.  
 Dispensers and teleports default to level 3.
 
+[![video](https://i.imgur.com/3F0KyQp.png)](https://www.youtube.com/watch?v=_6Zq_SFvRyg)
+
 ## Cvars:  
 sm_cvar sm_quickbuild_enable "1" // Enables/Disables the plugin (0, 1)  
 sm_cvar qb_sentrylevel "1" // Sets the default sentry level (1-3)  
