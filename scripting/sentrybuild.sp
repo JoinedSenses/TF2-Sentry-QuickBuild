@@ -33,7 +33,7 @@ public Plugin myinfo = {
 // --------------- SM API
 
 public void OnPluginStart() {
-	CreateConVar("sm_quickbuild_version", PLUGIN_VERSION, "Sentry Quickbuild Version",  FCVAR_NOTIFY|FCVAR_DONTRECORD);
+	CreateConVar("sm_quickbuild_version", PLUGIN_VERSION, "Sentry Quickbuild Version",  FCVAR_SPONLY|FCVAR_NOTIFY|FCVAR_DONTRECORD);
 	cvarEnabled = CreateConVar("sm_quickbuild_enable", "1", "Enables/disables engineer quick build", FCVAR_NOTIFY);
 	cvarSentryLevel = CreateConVar("qb_sentrylevel", "1", "Sets the default sentry level (1-3)", FCVAR_NOTIFY);
 	cvarDispenserLevel = CreateConVar("qb_dispenserlevel", "3", "Sets the default sentry level (1-3)", FCVAR_NOTIFY);
