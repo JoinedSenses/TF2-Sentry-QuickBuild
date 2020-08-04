@@ -1,6 +1,6 @@
 #pragma newdecls required
 #pragma semicolon 1
-#define PLUGIN_VERSION "2.3.2"
+#define PLUGIN_VERSION "2.3.3"
 #include <sourcemod>
 #include <sdktools>
 
@@ -89,11 +89,11 @@ public void OnPluginStart() {
 
 	// ConVars
 	CreateConVar("sm_quickbuild_version", PLUGIN_VERSION, "Sentry Quickbuild Version",  FCVAR_SPONLY|FCVAR_NOTIFY|FCVAR_DONTRECORD);
-	cvarEnabled = CreateConVar("sm_quickbuild_enable", "1", "Enables/disables engineer quick build", FCVAR_NOTIFY);
-	cvarSentryLevel = CreateConVar("qb_sentrylevel", "1", "Sets the default sentry level (1-3)", FCVAR_NOTIFY);
-	cvarDispenserLevel = CreateConVar("qb_dispenserlevel", "3", "Sets the default sentry level (1-3)", FCVAR_NOTIFY);
-	cvarTeleportLevel = CreateConVar("qb_teleportlevel", "3", "Sets the default sentry level (1-3)", FCVAR_NOTIFY);
-	cvarDisableTeleCollision = CreateConVar("qb_disabletelecollision", "1", "Prevents other players from colliding with teles", FCVAR_NOTIFY);
+	cvarEnabled = CreateConVar("sm_quickbuild_enable", "1", "Enables/disables engineer quick build");
+	cvarSentryLevel = CreateConVar("qb_sentrylevel", "1", "Sets the default sentry level (1-3)");
+	cvarDispenserLevel = CreateConVar("qb_dispenserlevel", "3", "Sets the default sentry level (1-3)");
+	cvarTeleportLevel = CreateConVar("qb_teleportlevel", "3", "Sets the default sentry level (1-3)");
+	cvarDisableTeleCollision = CreateConVar("qb_disabletelecollision", "1", "Prevents other players from colliding with teles");
 
 	cvarEnabled.AddChangeHook(cvarEnableChanged);
 	cvarSentryLevel.AddChangeHook(cvarChanged);
