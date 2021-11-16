@@ -6,23 +6,23 @@
 		{
       		"CBaseObject::StartBuilding"
 			{
-				"windows"	"336"
-				"linux"		"338"
+				"windows"	"339"
+				"linux"		"341"
 			}
       		"CBaseObject::FinishedBuilding"
 			{
-				"windows"	"337"
-				"linux"		"339"
+				"windows"	"340"
+				"linux"		"342"
 			}
 			"CBaseObject::StartUpgrading"
 			{
-				"windows"	"377"
-				"linux"		"378"
+				"windows"	"380"
+				"linux"		"381"
 			}
 			"CBaseObject::FinishUpgrading"
 			{
-				"windows"	"378"
-				"linux"		"379"
+				"windows"	"381"
+				"linux"		"382"
 			}
 		}
 	}
