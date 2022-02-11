@@ -1,6 +1,6 @@
 #pragma newdecls required
 #pragma semicolon 1
-#define PLUGIN_VERSION "2.3.3"
+#define PLUGIN_VERSION "2.3.4"
 #include <sourcemod>
 #include <sdktools>
 
@@ -10,17 +10,16 @@ enum {
 	OBJ_SENTRY
 }
 
-ConVar
-	  cvarEnabled
-	, cvarSentryLevel
-	, cvarDispenserLevel
-	, cvarTeleportLevel
-	, cvarDisableTeleCollision;
-Handle
-	  g_hSDKStartBuilding
-	, g_hSDKFinishBuilding
-	, g_hSDKStartUpgrading
-	, g_hSDKFinishUpgrading;
+ConVar cvarEnabled;
+ConVar cvarSentryLevel;
+ConVar cvarDispenserLevel;
+ConVar cvarTeleportLevel;
+ConVar cvarDisableTeleCollision;
+
+Handle g_hSDKStartBuilding;
+Handle g_hSDKFinishBuilding;
+Handle g_hSDKStartUpgrading;
+Handle g_hSDKFinishUpgrading;
 
 public Plugin myinfo = {
 	name = "Sentry Quick Build", 
