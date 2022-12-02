@@ -7,12 +7,12 @@
 			"CBaseObject::StartBuilding"
 			{
 				"windows"       "342"
-				"linux"         "343"
+				"linux"         "344"
 			}
 			"CBaseObject::FinishedBuilding"
 			{
 				"windows"       "343"
-				"linux"         "344"
+				"linux"         "345"
 			}
 			"CBaseObject::StartUpgrading"
 			{
